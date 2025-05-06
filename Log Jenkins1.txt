@@ -1,0 +1,69 @@
+Lanzada por el usuario Luis De Frutos Durán
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins  in C:\ProgramData\Jenkins\.jenkins\workspace\helloworld-cp1a
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Hello)
+[Pipeline] echo
+Saludo desde Plataforma de Jenkins
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Git Clone)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+ > git.exe rev-parse --resolve-git-dir C:\ProgramData\Jenkins\.jenkins\workspace\helloworld-cp1a\.git # timeout=10
+Fetching changes from the remote Git repository
+ > git.exe config remote.origin.url https://github.com/luisdefrutos/helloworld.git # timeout=10
+Fetching upstream changes from https://github.com/luisdefrutos/helloworld.git
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.49.0.windows.1'
+ > git.exe fetch --tags --force --progress -- https://github.com/luisdefrutos/helloworld.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git.exe rev-parse "refs/remotes/origin/master^{commit}" # timeout=10
+Checking out Revision 0bfe9943d52794dd3cab82332671809f88ecd5f1 (refs/remotes/origin/master)
+ > git.exe config core.sparsecheckout # timeout=10
+ > git.exe checkout -f 0bfe9943d52794dd3cab82332671809f88ecd5f1 # timeout=10
+ > git.exe branch -a -v --no-abbrev # timeout=10
+ > git.exe branch -D master # timeout=10
+ > git.exe checkout -b master 0bfe9943d52794dd3cab82332671809f88ecd5f1 # timeout=10
+Commit message: "Añadido configuración final de WireMock y arranque de Flask"
+ > git.exe rev-list --no-walk 0bfe9943d52794dd3cab82332671809f88ecd5f1 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Verificar contenido)
+[Pipeline] bat
+
+C:\ProgramData\Jenkins\.jenkins\workspace\helloworld-cp1a>dir
+ El volumen de la unidad C no tiene etiqueta.
+ El n�mero de serie del volumen es: 60EE-4156
+
+ Directorio de C:\ProgramData\Jenkins\.jenkins\workspace\helloworld-cp1a
+
+06/05/2025  14:04    <DIR>          .
+06/05/2025  14:19    <DIR>          ..
+06/05/2025  14:04                40 .gitignore
+06/05/2025  14:04    <DIR>          app
+06/05/2025  14:04    <DIR>          mappings
+06/05/2025  14:04               175 pytest.ini
+06/05/2025  14:04               418 README.md
+06/05/2025  14:04    <DIR>          test
+06/05/2025  14:04        18.739.568 wiremock-standalone-4.0.0-beta.2.jar
+               4 archivos     18.740.201 bytes
+               5 dirs  836.220.977.152 bytes libres
+[Pipeline] echo
+WORKSPACE: C:\ProgramData\Jenkins\.jenkins\workspace\helloworld-cp1a
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] echo
+Emula compilación proyecto
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
