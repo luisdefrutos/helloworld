@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Inicio') {
+            steps {
+                echo 'Inicio del pipeline en Jenkins'
+            }
+        }
+
+         stage('Clonar repositorio Git') {
+            steps {
+                   git url: 'https://github.com/luisdefrutos/helloworld.git', branch: 'master'
+            }
+        } 
+
+        stage('Verificar instalación de Python') {
+            steps {
+                bat 'where python || echo Python no está en PATH'
+                bat 'python --version || echo No se pudo ejecutar Python'
+            }
+        }
+
+        stage('Iniciar servicios: Flask y WireMock') {
+            steps {
+                echo 'Iniciando servicios Flask y WireMock...'
+                bat 'set PYTHONPATH=%CD% && start "" python app\\api.py'
+                bat 'start "" java -jar wiremock-standalone-4.0.0-beta.2.jar --root-dir %CD% --port 8081 --verbose'
+                sleep(time: 10, unit: 'SECONDS') 
+            }
+        }
+
+        stage('Ejecutar pruebas en paralelo') {
+            parallel {
+                stage('Pruebas Unitarias') {
+                    steps {
+                        bat 'python -m pytest test\\unit || echo Error en pruebas unitarias'
+                    }
+                }
+                stage('Pruebas de Servicio') {
+                    steps {
+                        bat 'python -m pytest test\\rest || echo Error en pruebas de servicio'
+                    }
+                }
+            }
+        }
+
+        stage('Post-pruebas') {
+            steps {
+                echo 'Finalización del pipeline'
+            }
+        }
+        
+        
+    }
+}
+
