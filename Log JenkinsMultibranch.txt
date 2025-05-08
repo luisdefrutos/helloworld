@@ -1,0 +1,25 @@
+Lanzada por el usuario Luis De Frutos Durán
+[jue may 08 20:02:24 CEST 2025] Starting branch indexing...
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.49.0.windows.1'
+ > git.exe ls-remote --symref -- https://github.com/luisdefrutos/helloworld.git # timeout=10
+ > git.exe rev-parse --resolve-git-dir C:\ProgramData\Jenkins\.jenkins\caches\git-6a0051f5984b747556a31eabdef3a9f8\.git # timeout=10
+Setting origin to https://github.com/luisdefrutos/helloworld.git
+ > git.exe config remote.origin.url https://github.com/luisdefrutos/helloworld.git # timeout=10
+Fetching & pruning origin...
+Listing remote references...
+ > git.exe config --get remote.origin.url # timeout=10
+ > git.exe --version # timeout=10
+ > git --version # 'git version 2.49.0.windows.1'
+ > git.exe ls-remote -h -- https://github.com/luisdefrutos/helloworld.git # timeout=10
+Fetching upstream changes from origin
+ > git.exe config --get remote.origin.url # timeout=10
+ > git.exe fetch --tags --force --progress --prune -- origin +refs/heads/*:refs/remotes/origin/* # timeout=10
+Checking branches...
+  Checking branch develop
+      ‘Jenkinsfile2’ found
+    Met criteria
+No changes detected: develop (still at ebd8c20b3464c936cb6edc519cd9ac6b4d89b9f1)
+Processed 2 branches
+[jue may 08 20:02:26 CEST 2025] Finished branch indexing. Indexing took 2 Seg
+Finished: SUCCESS
