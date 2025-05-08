@@ -34,6 +34,16 @@ class TestApi(unittest.TestCase):
         self.assertEqual(
             response.read().decode(), "8", "ERROR SQRT"
         )
+        
+        
+def test_api_division_por_cero(self):
+    url = f"{BASE_URL_MOCK}/calc/div/10/0"
+    try:
+        urlopen(url, timeout=DEFAULT_TIMEOUT)
+        self.fail(f"Se esperaba un error HTTP 400 al hacer petición a {url}")
+    except HTTPError as e:
+        self.assertEqual(e.code, 400, f"Se esperaba error 400 pero fue {e.code}")
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
