@@ -1,4 +1,4 @@
- pipeline {
+pipeline {
     agent none
 
     stages {
@@ -15,12 +15,13 @@
                     agent { label 'flask-agent' }
                     steps {
                         echo 'Lanzando servidor Flask'
+                        bat 'pip install flask'
                         bat '''
-                           cd app
+                            cd app
                             start /B python api.py
-                            ping 127.0.0.1 -n 6 > null  
+                            ping 127.0.0.1 -n 6 >nul
                         '''
-                        stash includes: 'test/rest/**', name: 'rest-tests'
+                        stash includes: 'app/**', name: 'flask-app'
                     }
                 }
 
@@ -57,7 +58,7 @@ if exist mappings (
         stage('Pruebas') {
             agent { label 'test-agent' }
             steps {
-                unstash 'rest-tests'
+                unstash 'flask-app'
                 unstash 'wiremock-mappings'
                 echo 'Ejecutando pruebas REST'
                 bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
