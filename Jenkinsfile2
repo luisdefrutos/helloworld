@@ -3,7 +3,7 @@ pipeline {
 
     stages {
         stage('Inicio') {
-            agent { label 'master' }
+             agent any
             steps {
                 echo 'Reto 2 - Inicio del pipeline distribuido'
             }
@@ -44,7 +44,7 @@ pipeline {
         }
 
         stage('Fin') {
-            agent { label 'master' }
+             agent any
             steps {
                 echo 'Reto 2 finalizado correctamente.'
             }
