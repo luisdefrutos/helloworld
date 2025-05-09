@@ -1,57 +1,56 @@
 pipeline {
-    agent any
+    agent none
 
     stages {
         stage('Inicio') {
+            agent { label 'master' }
             steps {
-                echo 'Inicio del pipeline en Jenkins'
+                echo 'Reto 2 - Inicio del pipeline distribuido'
             }
         }
 
-         stage('Clonar repositorio Git') {
-            steps {
-                   git url: 'https://github.com/luisdefrutos/helloworld.git', branch: 'master'
-            }
-        } 
-
-        stage('Verificar instalación de Python') {
-            steps {
-                bat 'where python || echo Python no está en PATH'
-                bat 'python --version || echo No se pudo ejecutar Python'
-            }
-        }
-
-        stage('Iniciar servicios: Flask y WireMock') {
-            steps {
-                echo 'Iniciando servicios Flask y WireMock...'
-                bat 'set PYTHONPATH=%CD% && start "" python app\\api.py'
-                bat 'start "" java -jar wiremock-standalone-4.0.0-beta.2.jar --root-dir %CD% --port 8081 --verbose'
-                sleep(time: 10, unit: 'SECONDS') 
-            }
-        }
-
-        stage('Ejecutar pruebas en paralelo') {
+        stage('Ejecución distribuida') {
             parallel {
-                stage('Pruebas Unitarias') {
+                stage('Arrancar Flask') {
+                    agent { label 'flask-agent' }
                     steps {
-                        bat 'python -m pytest test\\unit || echo Error en pruebas unitarias'
+                        echo 'Simulando ejecución de Flask en puerto 5000'
+                        bat 'echo Flask levantado'
                     }
                 }
-                stage('Pruebas de Servicio') {
+
+                stage('Arrancar WireMock') {
+                    agent { label 'wiremock-agent' }
                     steps {
-                        bat 'python -m pytest test\\rest || echo Error en pruebas de servicio'
+                        echo 'Simulando ejecución de WireMock en puerto 8081'
+                        bat 'echo WireMock levantado'
+                    }
+                }
+
+                stage('Pruebas unitarias') {
+                    agent { label 'unittest-agent' }
+                    steps {
+                        echo 'Ejecutando pruebas unitarias con pytest'
+                        bat 'pytest test/unit --maxfail=1 --disable-warnings -q'
+                    }
+                }
+
+                stage('Pruebas de servicio') {
+                    agent { label 'servicetest-agent' }
+                    steps {
+                        echo 'Ejecutando pruebas REST'
+                        bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
                     }
                 }
             }
         }
 
-        stage('Post-pruebas') {
+        stage('Fin') {
+            agent { label 'master' }
             steps {
-                echo 'Finalización del pipeline'
+                echo 'Reto 2 finalizado correctamente.'
             }
         }
-        
-        
     }
 }
 
