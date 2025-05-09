@@ -1,4 +1,4 @@
- pipeline {
+pipeline {
     agent none
 
     stages {
@@ -60,6 +60,12 @@
             steps {
                 unstash 'flask-app'
                 unstash 'wiremock-mappings'
+                echo 'Lanzando servidor Flask en test-agent'
+                bat '''
+                    cd app
+                    start /B python api.py
+                    ping 127.0.0.1 -n 6 >nul
+                '''
                 echo 'Ejecutando pruebas REST'
                 bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
                 echo 'Ejecutando pruebas unitarias'
