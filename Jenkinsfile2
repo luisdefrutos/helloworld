@@ -83,7 +83,10 @@ stage('Pruebas') {
         bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
 
         echo 'Ejecutando pruebas unitarias'
-        bat 'pytest test/unit --maxfail=1 --disable-warnings -q'
+            bat '''
+                set PYTHONPATH=%CD%
+                pytest test/unit --maxfail=1 --disable-warnings -q
+            '''
     }
 }
 
