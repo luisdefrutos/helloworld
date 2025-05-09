@@ -17,7 +17,7 @@
                         echo 'Lanzando servidor Flask'
                         bat '''
                             start /B python app/api.py
-                            timeout /T 5
+                            ping 127.0.0.1 -n 6 > nul
                         '''
                         stash includes: 'test/rest/**', name: 'rest-tests'
                     }
