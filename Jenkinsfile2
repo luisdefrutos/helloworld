@@ -99,13 +99,6 @@ stage('Pruebas') {
         }
     }
 
-    post {
-        always {
-            node('test-agent') {
-                echo 'Finalizando procesos si siguen en ejecución...'
-                bat 'taskkill /F /IM java.exe || exit 0'
-                bat 'taskkill /F /IM python.exe || exit 0'
-            }
-        }
-    }
+
+
 }
