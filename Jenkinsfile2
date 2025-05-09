@@ -16,8 +16,9 @@
                     steps {
                         echo 'Lanzando servidor Flask'
                         bat '''
-                            start /B python app/api.py
-                            ping 127.0.0.1 -n 6 > nul
+                           cd app
+                            start /B python api.py
+                            ping 127.0.0.1 -n 6 > null  
                         '''
                         stash includes: 'test/rest/**', name: 'rest-tests'
                     }
