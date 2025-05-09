@@ -1,7 +1,5 @@
 pipeline {
     agent none
-// Comentario de prueba para reejecutar pipeline del Reto 2
-// Comentario de prueba para probar re-ejecución automática
 
     stages {
         stage('Inicio') {
@@ -11,39 +9,37 @@ pipeline {
             }
         }
 
-        stage('Ejecución distribuida') {
+        stage('Servicios en paralelo') {
             parallel {
-                stage('Arrancar Flask') {
+                stage('Flask') {
                     agent { label 'flask-agent' }
                     steps {
-                        echo 'Simulando ejecución de Flask en puerto 5000'
-                        bat 'echo Flask levantado'
+                        echo 'Lanzando servidor Flask'
+                        bat 'start /B python app/api.py'
+                        stash includes: 'app/**', name: 'flask-code'
                     }
                 }
 
-                stage('Arrancar WireMock') {
+                stage('WireMock') {
                     agent { label 'wiremock-agent' }
                     steps {
-                        echo 'Simulando ejecución de WireMock en puerto 8081'
-                        bat 'echo WireMock levantado'
+                        echo 'Lanzando WireMock'
+                        bat 'start /B java -jar wiremock/wiremock-standalone-4.0.0-beta.2.jar --port 8081'
+                        stash includes: 'wiremock/mappings/**', name: 'wiremock-mappings'
                     }
                 }
+            }
+        }
 
-                stage('Pruebas unitarias') {
-                    agent { label 'unittest-agent' }
-                    steps {
-                        echo 'Ejecutando pruebas unitarias con pytest'
-                        bat 'pytest test/unit --maxfail=1 --disable-warnings -q'
-                    }
-                }
-
-                stage('Pruebas de servicio') {
-                    agent { label 'servicetest-agent' }
-                    steps {
-                        echo 'Ejecutando pruebas REST'
-                        bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
-                    }
-                }
+        stage('Pruebas') {
+            agent { label 'test-agent' }
+            steps {
+                unstash 'flask-code'
+                unstash 'wiremock-mappings'
+                echo 'Ejecutando tests unitarios'
+                bat 'pytest test/unit --maxfail=1 --disable-warnings -q'
+                echo 'Ejecutando tests de servicio'
+                bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
             }
         }
 
@@ -52,6 +48,14 @@ pipeline {
             steps {
                 echo 'Reto 2 finalizado correctamente.'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Finalizando procesos si siguen en ejecución...'
+            bat 'taskkill /F /IM python.exe || exit 0'
+            bat 'taskkill /F /IM java.exe || exit 0'
         }
     }
 }
