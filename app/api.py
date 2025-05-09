@@ -1,7 +1,9 @@
-
 import http.client
+import sys
+import os
 
-from flask import Flask 
+# Añadir el directorio raíz del proyecto al path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app import util
 from app.calc import Calculator
