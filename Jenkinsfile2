@@ -24,7 +24,7 @@ pipeline {
                     agent { label 'wiremock-agent' }
                     steps {
                         echo 'Lanzando WireMock'
-                        bat 'start /B java -jar wiremock/wiremock-standalone-4.0.0-beta.2.jar --port 8081'
+                        bat 'start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081'
                         stash includes: 'wiremock/mappings/**', name: 'wiremock-mappings'
                     }
                 }
