@@ -1,6 +1,6 @@
 pipeline {
     agent none
-
+// Comentario de prueba para reejecutar pipeline del Reto 2
     stages {
         stage('Inicio') {
             agent { label 'master' }
