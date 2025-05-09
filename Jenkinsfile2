@@ -1,4 +1,4 @@
-pipeline {
+ pipeline {
     agent none
 
     stages {
@@ -30,25 +30,25 @@ pipeline {
                     steps {
                         echo 'Lanzando WireMock'
                         bat '''
-echo === DIRECTORIO ACTUAL ===
-cd
-dir
-echo === INTENTANDO EJECUTAR WIREMOCK ===
-if exist wiremock-standalone-4.0.0-beta.2.jar (
-    start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081
-) else (
-    echo ERROR: No se encuentra wiremock-standalone-4.0.0-beta.2.jar
-    exit /b 1
-)
-'''
+                            echo === DIRECTORIO ACTUAL ===
+                            cd
+                            dir
+                            echo === INTENTANDO EJECUTAR WIREMOCK ===
+                            if exist wiremock-standalone-4.0.0-beta.2.jar (
+                                start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081
+                            ) else (
+                                echo ERROR: No se encuentra wiremock-standalone-4.0.0-beta.2.jar
+                                exit /b 1
+                            )
+                        '''
                         bat '''
-if exist mappings (
-    echo === Carpeta mappings encontrada ===
-    dir mappings
-) else (
-    echo WARNING: No se encontró la carpeta mappings
-)
-'''
+                            if exist mappings (
+                                echo === Carpeta mappings encontrada ===
+                                dir mappings
+                            ) else (
+                                echo WARNING: No se encontró la carpeta mappings
+                            )
+                        '''
                         stash includes: 'mappings/**', name: 'wiremock-mappings', allowEmpty: true
                     }
                 }
