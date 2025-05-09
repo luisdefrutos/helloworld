@@ -3,7 +3,7 @@ pipeline {
 
     stages {
         stage('Inicio') {
-             agent any
+            agent any
             steps {
                 echo 'Reto 2 - Inicio del pipeline distribuido'
             }
@@ -16,7 +16,7 @@ pipeline {
                     steps {
                         echo 'Lanzando servidor Flask'
                         bat 'start /B python app/api.py'
-                        stash includes: 'app/**', name: 'flask-code'
+                        stash includes: 'app/**', name: 'flask-app'
                     }
                 }
 
@@ -24,7 +24,19 @@ pipeline {
                     agent { label 'wiremock-agent' }
                     steps {
                         echo 'Lanzando WireMock'
-                        bat 'start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081'
+                        bat '''
+echo === DIRECTORIO ACTUAL ===
+cd
+dir
+echo === INTENTANDO EJECUTAR WIREMOCK ===
+if exist wiremock-standalone-4.0.0-beta.2.jar (
+    start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081
+) else (
+    echo ERROR: No se encuentra wiremock-standalone-4.0.0-beta.2.jar
+    exit /b 1
+)
+'''
+                        bat 'dir wiremock\\mappings'
                         stash includes: 'wiremock/mappings/**', name: 'wiremock-mappings'
                     }
                 }
@@ -34,17 +46,17 @@ pipeline {
         stage('Pruebas') {
             agent { label 'test-agent' }
             steps {
-                unstash 'flask-code'
+                unstash 'flask-app'
                 unstash 'wiremock-mappings'
-                echo 'Ejecutando tests unitarios'
-                bat 'pytest test/unit --maxfail=1 --disable-warnings -q'
-                echo 'Ejecutando tests de servicio'
+                echo 'Ejecutando pruebas REST'
                 bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
+                echo 'Ejecutando pruebas unitarias'
+                bat 'pytest test/unit --maxfail=1 --disable-warnings -q'
             }
         }
 
         stage('Fin') {
-             agent any
+            agent any
             steps {
                 echo 'Reto 2 finalizado correctamente.'
             }
@@ -54,8 +66,8 @@ pipeline {
     post {
         always {
             echo 'Finalizando procesos si siguen en ejecución...'
-            bat 'taskkill /F /IM python.exe || exit 0'
             bat 'taskkill /F /IM java.exe || exit 0'
+            bat 'taskkill /F /IM python.exe || exit 0'
         }
     }
 }
