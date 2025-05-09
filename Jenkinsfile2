@@ -15,8 +15,11 @@
                     agent { label 'flask-agent' }
                     steps {
                         echo 'Lanzando servidor Flask'
-                        bat 'start /B python app/api.py'
-                        stash includes: 'app/**', name: 'flask-app'
+                        bat '''
+                            start /B python app/api.py
+                            timeout /T 5
+                        '''
+                        stash includes: 'test/rest/**', name: 'rest-tests'
                     }
                 }
 
@@ -53,7 +56,7 @@ if exist mappings (
         stage('Pruebas') {
             agent { label 'test-agent' }
             steps {
-                unstash 'flask-app'
+                unstash 'rest-tests'
                 unstash 'wiremock-mappings'
                 echo 'Ejecutando pruebas REST'
                 bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
