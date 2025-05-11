@@ -44,9 +44,8 @@ class TestApi(unittest.TestCase):
             urlopen(url, timeout=DEFAULT_TIMEOUT)
             self.fail(f"Se esperaba un error HTTP 400 al hacer petición a {url}")
         except HTTPError as e:
-            self.assertEqual(e.code, 400, f"Se esperaba error 400 pero fue {e.code}")
-            
-            
+             self.assertEqual(e.code, 406, f"Se esperaba error 406 pero fue {e.code}")
+             
         def test_api_mul(self):
             url = f"{BASE_URL}/calc/mul/4/2"
             response = urlopen(url, timeout=DEFAULT_TIMEOUT)
@@ -60,7 +59,6 @@ class TestApi(unittest.TestCase):
             self.assertEqual(response.status, 200)
             result = response.read().decode('utf-8').strip()
             self.assertEqual(result, "4.0")
-
 
 
 

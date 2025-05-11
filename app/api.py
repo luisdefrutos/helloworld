@@ -59,7 +59,7 @@ def div(op_1, op_2):
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, HEADERS)
     except ZeroDivisionError as e:
-        return (str(e), http.client.BAD_REQUEST, HEADERS)
+       return (str(e), http.client.NOT_ACCEPTABLE, HEADERS)
 
 
 
