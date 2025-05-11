@@ -50,16 +50,15 @@ def mul(op_1, op_2):
 @api_application.route("/calc/div/<op_1>/<op_2>", methods=["GET"])
 def div(op_1, op_2):
     try:
-    
-        
         num_1, num_2 = util.convert_to_number(op_1), util.convert_to_number(op_2)
         if num_2 == 0:
-            raise ZeroDivisionError("La operación no es válida.El número divisor no puede ser cero.")
+            raise ZeroDivisionError("La operación no es válida. El número divisor no puede ser cero.")
         return ("{}".format(CALCULATOR.divide(num_1, num_2)), http.client.OK, HEADERS)
+    except ZeroDivisionError as e:
+        return (str(e), http.client.NOT_ACCEPTABLE, HEADERS)
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, HEADERS)
-    except ZeroDivisionError as e:
-       return (str(e), http.client.NOT_ACCEPTABLE, HEADERS)
+
 
 
 
