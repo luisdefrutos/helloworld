@@ -89,20 +89,31 @@ pipeline {
                 '''
             }
         }
-
 stage('Simular carga CPU') {
     agent { label 'test-agent' }
     steps {
         echo 'Simulando carga de CPU durante 30 segundos'
+
         bat '''
-            echo Lanzando carga en paralelo
-            for /l %%x in (1, 1, 4) do start /B cmd /c "for /l %%i in (0,0,0) do @echo >nul"
+            @echo off
+            echo Iniciando carga de CPU...
+
+            rem Lanza 4 procesos en paralelo que hacen bucles durante 30 segundos
+            for /l %%x in (1, 1, 4) do (
+                powershell -Command "Start-Job {while ($true) {} }" >nul
+            )
+
+            rem Espera 30 segundos
             timeout /T 30 >nul
-            echo Terminando procesos de carga
-            taskkill /F /IM cmd.exe /T >nul 2>&1
+
+            rem Limpia los procesos lanzados por PowerShell
+            powershell -Command "Get-Job | Remove-Job -Force"
+
+            echo Carga finalizada.
         '''
     }
 }
+
 
 
         stage('Fin') {
