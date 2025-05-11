@@ -21,12 +21,10 @@ pipeline {
             }
         }
 
-        stage('Test Unitarios') {
+     stage('Test Unitarios') {
             steps {
-                bat '''
-                    mkdir reports
-                    pytest test/unit --junitxml=reports/results.xml --maxfail=1 --disable-warnings -q
-                '''
+                bat 'mkdir reports'
+                bat 'cmd /c "python -m pytest test/unit --junitxml=reports/results.xml --maxfail=1 --disable-warnings -q"'
                 junit 'reports/results.xml'
             }
         }
