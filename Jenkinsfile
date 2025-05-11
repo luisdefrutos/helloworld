@@ -90,17 +90,20 @@ pipeline {
             }
         }
 
-        stage('Simular carga CPU') {
-            agent { label 'test-agent' }
-            steps {
-                echo 'Simulando carga en CPU con bucles infinitos durante 30 segundos'
-                bat '''
-                    for /l %%x in (1, 1, 4) do start /B cmd /c "for /l %%i in (0, 0, 0) do @echo >nul"
-                    timeout /T 30 >nul
-                    taskkill /F /IM cmd.exe
-                '''
-            }
-        }
+stage('Simular carga CPU') {
+    agent { label 'test-agent' }
+    steps {
+        echo 'Simulando carga de CPU durante 30 segundos'
+        bat '''
+            echo Lanzando carga en paralelo
+            for /l %%x in (1, 1, 4) do start /B cmd /c "for /l %%i in (0,0,0) do @echo >nul"
+            timeout /T 30 >nul
+            echo Terminando procesos de carga
+            taskkill /F /IM cmd.exe /T >nul 2>&1
+        '''
+    }
+}
+
 
         stage('Fin') {
             agent any
