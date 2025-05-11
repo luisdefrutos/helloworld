@@ -94,7 +94,7 @@ stage('Pruebas') {
         stage('Fin') {
             agent any
             steps {
-                echo 'Reto 2 finalizado correctamente.'
+                echo 'Reto 3 finalizado correctamente.'
             }
         }
     }
