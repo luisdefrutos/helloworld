@@ -5,7 +5,7 @@ pipeline {
         stage('Inicio') {
             agent any
             steps {
-                echo 'Reto 2 - Inicio del pipeline distribuido'
+                echo 'Reto 3 - Inicio del pipeline distribuido'
             }
         }
 
