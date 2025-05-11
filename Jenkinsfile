@@ -5,7 +5,7 @@ pipeline {
         stage('Inicio') {
             agent any
             steps {
-                echo 'Reto 2 - Inicio del pipeline distribuido'
+                echo 'Reto 4 - Inicio del pipeline distribuido'
             }
         }
 
@@ -55,50 +55,58 @@ pipeline {
             }
         }
 
-stage('Pruebas') {
-    agent { label 'test-agent' }
-    steps {
-        unstash 'flask-app'
-        unstash 'wiremock-mappings'
-        
-        echo 'Lanzando servidor Flask en test-agent'
-        bat '''
-            cd app
-            start /B python api.py
-            ping 127.0.0.1 -n 6 >nul
-        '''
+        stage('Pruebas') {
+            agent { label 'test-agent' }
+            steps {
+                unstash 'flask-app'
+                unstash 'wiremock-mappings'
 
-        echo 'Lanzando WireMock en test-agent'
-        bat '''
-            if exist wiremock-standalone-4.0.0-beta.2.jar (
-                start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081
-                ping 127.0.0.1 -n 6 >nul
-            ) else (
-                echo ERROR: No se encuentra wiremock-standalone-4.0.0-beta.2.jar
-                exit /b 1
-            )
-        '''
+                echo 'Lanzando servidor Flask en test-agent'
+                bat '''
+                    cd app
+                    start /B python api.py
+                    ping 127.0.0.1 -n 6 >nul
+                '''
 
-        echo 'Ejecutando pruebas REST'
-        bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
+                echo 'Lanzando WireMock en test-agent'
+                bat '''
+                    if exist wiremock-standalone-4.0.0-beta.2.jar (
+                        start /B java -jar wiremock-standalone-4.0.0-beta.2.jar --port 8081
+                        ping 127.0.0.1 -n 6 >nul
+                    ) else (
+                        echo ERROR: No se encuentra wiremock-standalone-4.0.0-beta.2.jar
+                        exit /b 1
+                    )
+                '''
 
-        echo 'Ejecutando pruebas unitarias'
-            bat '''
-                set PYTHONPATH=%CD%
-                pytest test/unit --maxfail=1 --disable-warnings -q
-            '''
-    }
-}
+                echo 'Ejecutando pruebas REST'
+                bat 'pytest test/rest --maxfail=1 --disable-warnings -q'
 
+                echo 'Ejecutando pruebas unitarias'
+                bat '''
+                    set PYTHONPATH=%CD%
+                    pytest test/unit --maxfail=1 --disable-warnings -q
+                '''
+            }
+        }
+
+        stage('Simular carga CPU') {
+            agent { label 'test-agent' }
+            steps {
+                echo 'Simulando carga en CPU con bucles infinitos durante 30 segundos'
+                bat '''
+                    for /l %%x in (1, 1, 4) do start /B cmd /c "for /l %%i in (0, 0, 0) do @echo >nul"
+                    timeout /T 30 >nul
+                    taskkill /F /IM cmd.exe
+                '''
+            }
+        }
 
         stage('Fin') {
             agent any
             steps {
-                echo 'Reto 2 finalizado correctamente.'
+                echo 'Reto 4 finalizado correctamente.'
             }
         }
     }
-
-
-
 }
